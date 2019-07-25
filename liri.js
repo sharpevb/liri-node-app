@@ -2,6 +2,7 @@ require("dotenv").config();
 var Spotify = require("node-spotify-api");
 var axios = require("axios");
 var keys = require("./keys.js");
+var fs = require("fs");
 var moment = require("moment");
 var m = moment();
 var spotify = new Spotify(keys.spotify);
@@ -35,7 +36,7 @@ function input(command, title) {
             console.log("concert-this \nspotify-this-song \nmovie-this \ndo-what-it-says \n")
     }
 }
-console.log(input(command, title));
+console.log(input(command, title)); //"undefined in terminal"? but without it, no data returns
 
 
 // Concert-This command call
@@ -74,17 +75,11 @@ function movieThis(title) {
     }
     var queryURl = "http://www.omdbapi.com/?t=" + title + "&y=&plot=short&apikey=trilogy"
     axios.get(queryURl).then(function (response) {
+        var movieInfo = response.data
         console.log("--------------------------------");
         console.log("Search Results:");
         console.log("--------------------------------");
-        console.log("  Title: " + response.data.Title);
-        console.log("  Released: " + response.data.Released);
-        console.log("  IMDb Rating: " + response.data.imdbRating)
-        console.log("  Rotten Tomatoes Rating: " + response.data.Ratings[1].Value);
-        console.log("  Produced in: " + response.data.Country);
-        console.log("  Language: " + response.data.Language);
-        console.log("  Plot: " + response.data.Plot);
-        console.log("  Actors: " + response.data.Actors);
+        console.log("  Title: " + movieInfo.Title + "\n  Released: " + movieInfo.Released + "\n  IMDb Rating: " + movieInfo.imdbRating + "\n  Rotten Tomatoes Rating: " + movieInfo.Ratings[1].Value + "\n  Produced in: " + movieInfo.Country + "\n  Language: " + movieInfo.Language + "\n  Plot: " + movieInfo.Plot + "\n  Actors: " + movieInfo.Actors);
         console.log("\n");
 
     });
@@ -93,6 +88,8 @@ function movieThis(title) {
 
 // Spotify-This-Song!!!!!
 function spotifyThis(title) {
+    // Displays info about "The Sign" if no song was typed in. 
+    // Putting "The Sign" instead of "Ace fo Base" returned a track off of the Spiderverse Soundtrack
     if (!title) {
         title = "Ace of Base"
     }
@@ -107,30 +104,36 @@ function spotifyThis(title) {
         console.log("  Artist Name: " + musicData.artists[0].name + "\n  Song Title: " + musicData.name +
             "\n  Album Title: " + musicData.album.name +
             "\n  Preview URL: " + musicData.preview_url);
-        console.log("--------------------------------")
+        console.log("\n")
     });
 };
 
+// Do-What-It-Says
+function doThis() {
+    fs.readFile("random.txt", "utf8", function (err, data) {
+       // Error msg
+        if (err) {
+            return console.log(err);
+        }
 
+        var dataArr = data.split(",");
+        console.log(dataArr);
 
-/*
-
-CODE GRAVEYARD
-
-axios.get("http://www.omdbapi.com/?t=remember+the+titans&y=&plot=short&apikey=trilogy").then(
-  function(response) {
-    console.log("The movie's rating is: " + response.data.imdbRating);
-  }
-
-);
-
-//var bands = new Bands(keys.bands);
-//var omdb = new (keys.omdb);
-
-if (command === "concert-this") {
-    console.log("concert");
-};
-
-if (title === "")
-
-*/
+        // Grabs "I Want It That Way" song info via "spotify-this-song" command from random.txt
+        if (dataArr[0] === "spotify-this-song") {
+            var txtSong = dataArr[1].trim();
+            spotifyThis(txtSong);
+        }
+        // Grabs "Mulan" movie info via "movie-this" command from random.txt
+        if (dataArr[2] === "movie-this") {
+            var txtMovie = dataArr[3].trim();
+            movieThis(txtMovie);
+        }
+        // Grabs "Pharrell Williams" concert info via "concert-this" command from random.txt
+        // Error msg
+        if (dataArr[4] === "concert-this") {
+            var txtConcert = dataArr[5].trim();
+            concertThis(txtConcert);
+        }
+    })
+}
