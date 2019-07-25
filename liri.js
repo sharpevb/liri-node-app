@@ -2,6 +2,7 @@ require("dotenv").config();
 var Spotify = require("node-spotify-api");
 var axios = require("axios");
 var keys = require("./keys.js");
+var moment = require("moment")
 var spotify = new Spotify(keys.spotify);
 
 var command = process.argv[2];
@@ -36,9 +37,22 @@ console.log(input(command, title));
 // Needs some work
 function concertThis(title) {
     var queryURl = "https://rest.bandsintown.com/artists/" + title + "/events?app_id=codingbootcamp"
-    axios.get(queryURl).then(function(response) {
-        var concerts = response.data;
-        console.log(concerts);
+    axios.get(queryURl).then(function (response) {
+    var concertList = response.data    
+
+        for (var i = 0; i < concertList.length; i++) {
+            //Trying to get the datetime formatted using Moment 
+                //var date = moment(datetime).format("dddd, MMMM Do YYYY, h:mm:ss a")
+            console.log("--------------------------------");
+            console.log("Search Results:");
+            console.log("--------------------------------");
+            console.log("  Venue: " + concertList[i].venue.name);            
+            console.log("  Country: " + concertList[i].venue.country);
+            console.log("  State: " + concertList[i].venue.region);
+            console.log("  City: " + concertList[i].venue.city);            
+            console.log("  Date: " + concertList[i].datetime)
+            console.log("\n")
+        }
     })
 }
 
