@@ -29,9 +29,9 @@ function input(command, title) {
             break;
         default:
             console.log("\n");
-            console.log("-------------------------------------------");
-            console.log("Please enter one of the following commands")
-            console.log("-------------------------------------------");
+            console.log("-----------------------------------------------------------------");
+            console.log("Please enter one of the following commands after node liri.js")
+            console.log("-----------------------------------------------------------------");
             console.log("concert-this \nspotify-this-song \nmovie-this \ndo-what-it-says \n")
     }
 }
@@ -40,7 +40,9 @@ console.log(input(command, title)); // This is "undefined" in terminal. but with
 // Concert-This (Bandsintown)
 function concertThis(title) {
     if (!title) {
-        console.log("Please type a band or artist")
+        console.log("--------------------------------");
+        console.log("Please type a band or artist!")
+        console.log("--------------------------------");
     }
 
     var queryURl = "https://rest.bandsintown.com/artists/" + title + "/events?app_id=codingbootcamp"
@@ -55,11 +57,11 @@ function concertThis(title) {
             var format = "YYYY-MM-DD";
             var convert = moment(date, format);
             var finalDate = convert.format("MM/DD/YYYY")
-
+            
             console.log("--------------------------------");
             console.log("Concert Search Results:");
             console.log("--------------------------------");
-            console.log("  Venue: " + concertList[i].venue.name + "\n  Country: " + concertList[i].venue.country + "\n  State: " + concertList[i].venue.region + "\n  City: " + concertList[i].venue.city + "\n  Date: " + finalDate);
+            console.log("  Name: " + concertList[i].lineup + "\n  Venue: " + concertList[i].venue.name + "\n  Country: " + concertList[i].venue.country + "\n  State: " + concertList[i].venue.region + "\n  City: " + concertList[i].venue.city + "\n  Date: " + finalDate);
             console.log("\n");
         }
     })
@@ -137,7 +139,7 @@ function doThis() {
             var txtSong = dataArr[1].trim();
             spotifyThis(txtSong);
         }
-        
+
         // Grabs "Mulan" movie info via "movie-this" command from random.txt
         if (dataArr[2] === "movie-this") {
             var txtMovie = dataArr[3].trim();
